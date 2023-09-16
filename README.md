@@ -23,7 +23,7 @@ User Authentication and Access Control: To ensure data security, IMS employs use
 
 Data Import and Export: Users can import and export inventory data via standard file formats (e.g., CSV), simplifying bulk updates and data exchange with external systems.
 
-#Benefits:
+# Benefits
 
 Implementing an Inventory Management System offers several benefits:
 
@@ -37,18 +37,18 @@ Use Cases:
 
 Inventory Management Systems find applications across various industries, including retail, manufacturing, e-commerce, healthcare, and logistics. Businesses of all sizes, from small startups to large enterprises, benefit from the control and efficiency these systems offer.
 
-#Conclusion:
+# Conclusion
 
 In summary, an Inventory Management System is a powerful tool that empowers organizations to manage their inventory resources effectively. It enhances productivity, reduces costs, improves accuracy, and provides valuable insights, making it an indispensable asset for businesses operating in today's competitive markets.
 
-#Technology:
+# Technology
 
 Developer is allowed to use any technology
 
-#Course Name:
+# Course Name
 
 Software Engineering
 
-#Developer Name:
+# Developer Name
 
 Amna Imran
