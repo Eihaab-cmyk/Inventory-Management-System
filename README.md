@@ -51,4 +51,4 @@ Software Engineering
 
 # Developer Name
 
-Amna Imran
+Amna Imran Nagi
