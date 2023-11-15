@@ -15,7 +15,6 @@
   }
   
   .form-container form {
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
@@ -68,4 +67,19 @@
   .forgot-btn:hover {
     color: white !important;
     border-radius: 10px;
+  }
+
+  .product-link {
+    text-decoration: none !important;
+    color: black !important;
+  }
+  
+  .cat-btn {
+    padding: 40px 0px;
+    font-size: 24px;
+    text-transform: uppercase;
+  }
+  .cat-btn:hover {
+    background-color: #434343;
+    color: white;
   }

@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <>
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary" style={{ backgroundColor: "black", boxShadow: "none" }}>
   <div className="container-fluid">
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon" />
@@ -49,18 +49,45 @@ const Header = () => {
           </>
           ) : (
           <>
-            <li className="nav-item">
-                    <NavLink onClick={handleLogout} to="/login" className="nav-link">
-                      Logout
-                    </NavLink>
-                  </li>
+            <li className="nav-item dropdown">
+                      <NavLink
+                        className="nav-link dropdown-toggle"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        style={{ border: "none" }}
+                      >
+                        {auth?.user?.name}
+                      </NavLink>
+                      <ul className="dropdown-menu">
+                        <li>
+                          <NavLink
+                            to={`/dashboard/${
+                              auth?.user?.role === 1 ? "admin" : "user"
+                            }`}
+                            className="dropdown-item"
+                          >
+                            Dashboard
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            onClick={handleLogout}
+                            to="/login"
+                            className="dropdown-item"
+                          >
+                            Logout
+                          </NavLink>
+                        </li>
+                      </ul>
+                    </li>
           </>
           
           )}
 
         <li className="nav-item">
           <NavLink to= "/Cart" className="nav-link" >Cart (0)</NavLink>
-        </li>
+        </li> 
       </ul>
     </div>
   </div>
