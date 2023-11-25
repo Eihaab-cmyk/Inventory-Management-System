@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
+import { saveLogs } from "../../components/utils/logs";
 
 const ForgotPasssword = () => {
     const [email, setEmail] = useState("");
@@ -29,6 +30,7 @@ const ForgotPasssword = () => {
             toast.error(res.data.message);
         }
         } catch (error) {
+            saveLogs(error.message,"/forgot-password","Admin/User")
         console.log(error);
         toast.error("Something went wrong");
         }

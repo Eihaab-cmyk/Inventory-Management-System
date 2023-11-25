@@ -4,6 +4,7 @@ import Layout from "./../../components/Layout/Layout";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 import moment from "moment";
+import { saveLogs } from "../../components/utils/logs";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,6 +14,7 @@ const Orders = () => {
       const { data } = await axios.get("http://localhost:3050/api/v1/auth/orders");
       setOrders(data);
     } catch (error) {
+      saveLogs(error.message,"/orders","Admin/User")
       console.log(error);
     }
   };

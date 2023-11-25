@@ -4,6 +4,7 @@ import Layout from "./../../components/Layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { saveLogs } from "../../components/utils/logs";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ const Products = () => {
       const { data } = await axios.get("http://localhost:3050/api/v1/product/get-product");
       setProducts(data.products);
     } catch (error) {
+      saveLogs(error.message,"admin/product/get-product","Admin")
       console.log(error);
       toast.error("Something Went Wrong");
     }

@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
+import { saveLogs } from "../../components/utils/logs";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -48,6 +49,7 @@ const Login = () => {
             toast.error(res.data.message);
         }
         } catch (error) {
+            saveLogs(error.message,"/login","Admin/User")
         console.log(error);
         toast.error("Something went wrong");
         }

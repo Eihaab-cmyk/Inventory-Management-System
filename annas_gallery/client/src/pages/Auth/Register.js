@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
+import { saveLogs } from "../../components/utils/logs";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -33,6 +34,7 @@ const Register = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
+      saveLogs(error.message,"register","User")
       console.log(error);
       toast.error("Something went wrong");
     }

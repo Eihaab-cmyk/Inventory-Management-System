@@ -2,6 +2,10 @@ import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
+import { authAudit } from "./authAuditController.js";
+import { orderAudit } from "./orderAuditController.js";
+import frontendLogsModel from "../models/frontendLogsModel.js";
+import { saveLogs } from "./backendLogsController.js";
 
 export const registerController = async (req, res) => {
     try {
@@ -49,6 +53,7 @@ export const registerController = async (req, res) => {
             password: hashedPassword,
             answer,
         }).save();
+        authAudit(user._id,"INSERT","-",user);
 
         res.status(201).send({
             success: true,
@@ -57,6 +62,7 @@ export const registerController = async (req, res) => {
         });
     } 
     catch (error) {
+            saveLogs(error.message,"/register","POST")
             console.log(error);
             res.status(500).send({
             success: false,
@@ -114,6 +120,7 @@ export const loginController = async (req, res) => {
         });
     } 
     catch (error) {
+        saveLogs(error.message,"/login","POST")
         console.log(error);
         res.status(500).send({
         success: false,
@@ -129,18 +136,20 @@ export const forgotPasswordController = async (req, res) => {
     try {
         const { email, answer, newPassword } = req.body;
         if (!email) {
-            res.status(400).send({ message: "Emai is required" });
+            res.status(400).send({ message: "Email is required" });
         }
         if (!answer) {
-            res.status(400).send({ message: "answer is required" });
+            res.status(400).send({ message: "Answer is required" });
         }
         if (!newPassword) {
             res.status(400).send({ message: "New Password is required" });
         }
+
         //check
         const user = await userModel.findOne({ email, answer });
         //validation
         if (!user) {
+            saveLogs(error.message,"/forgot-password","POST")
             return res.status(404).send({
             success: false,
             message: "Wrong Email Or Answer",
@@ -148,11 +157,14 @@ export const forgotPasswordController = async (req, res) => {
         }
         const hashed = await hashPassword(newPassword);
         await userModel.findByIdAndUpdate(user._id, { password: hashed });
+        const updatedUser = await userModel.findOne({email, answer});
+        authAudit(user._id,"UPDATE",user,updatedUser);
         res.status(200).send({
             success: true,
             message: "Password Reset Successfully",
         });
     } catch (error) {
+        saveLogs(error.message,"/forgot-password","POST")
         console.log(error);
         res.status(500).send({
             success: false,
@@ -192,12 +204,14 @@ export const testController = (req, res) => {
         },
         { new: true }
       );
+      authAudit(req.user._id,"UPDATE",user,updatedUser);
       res.status(200).send({
         success: true,
         message: "Profile Updated Successfully",
         updatedUser,
       });
     } catch (error) {
+      saveLogs(error.message,"/profile","PUT")
       console.log(error);
       res.status(400).send({
         success: false,
@@ -207,7 +221,7 @@ export const testController = (req, res) => {
     }
   };
   
-  //orders
+//orders
 export const getOrdersController = async (req, res) => {
   try {
     const orders = await orderModel
@@ -216,10 +230,11 @@ export const getOrdersController = async (req, res) => {
       .populate("buyer", "name");
     res.json(orders);
   } catch (error) {
+    saveLogs(error.message,"/orders","GET")
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error WHile Geting Orders",
+      message: "Error While Geting Orders",
       error,
     });
   }
@@ -235,10 +250,11 @@ export const getAllOrdersController = async (req, res) => {
       .sort({ createdAt: "-1" });
     res.json(orders);
   } catch (error) {
+    saveLogs(error.message,"/all-orders","GET")
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error WHile Geting Orders",
+      message: "Error While Geting Orders",
       error,
     });
   }
@@ -249,13 +265,16 @@ export const orderStatusController = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
+    const oldValue = await orderModel.find({_id:orderId});
     const orders = await orderModel.findByIdAndUpdate(
       orderId,
       { status },
       { new: true }
     );
+    orderAudit(orderId,"UPDATE",oldValue,orders);
     res.json(orders);
   } catch (error) {
+    saveLogs(error.message,"/order-status/:orderId","PUT")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -264,3 +283,14 @@ export const orderStatusController = async (req, res) => {
     });
   }
 };
+
+export  const fronendLogsController =async (req, res) => {
+  const ErrorMessage=req.body.message;
+  const pageURL=req.body.url;
+  const portal=req.body.portal;
+  console.log(req.body);
+  const log = new frontendLogsModel({ErrorMessage,pageURL,portal});
+  await log.save();
+
+  res.send({ message: "Log saved" });
+  };

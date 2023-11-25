@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { saveLogs } from "../../components/utils/logs";
+
 const { Option } = Select;
 
 const UpdateProduct = () => {
@@ -35,6 +37,7 @@ const UpdateProduct = () => {
       setShipping(data.product.shipping);
       setCategory(data.product.category._id);
     } catch (error) {
+      saveLogs(error.message,"admin/product/get-product/${params.slug}","Admin")
       console.log(error);
     }
   };
@@ -52,6 +55,7 @@ const UpdateProduct = () => {
         setCategories(data?.category);
       }
     } catch (error) {
+      saveLogs(error.message,"admin/category/get-category","Admin")
       console.log(error);
       toast.error("Something went wrong in getting catgeory");
     }
@@ -83,6 +87,7 @@ const UpdateProduct = () => {
         navigate("/dashboard/admin/products");
       }
     } catch (error) {
+      saveLogs(error.message,"admin/product/update-product/${id}","Admin")
       console.log(error);
       toast.error("something went wrong");
     }
@@ -99,6 +104,7 @@ const UpdateProduct = () => {
       toast.success("Product DEleted Succfully");
       navigate("/dashboard/admin/products");
     } catch (error) {
+      saveLogs(error.message,"admin/product/delete-product/${id}","Admin")
       console.log(error);
       toast.error("Something went wrong");
     }

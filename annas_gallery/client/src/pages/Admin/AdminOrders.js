@@ -6,6 +6,8 @@ import Layout from "../../components/Layout/Layout";
 import { useAuth } from "../../context/auth";
 import moment from "moment";
 import { Select } from "antd";
+import { saveLogs } from "../../components/utils/logs";
+
 const { Option } = Select;
 
 const AdminOrders = () => {
@@ -24,6 +26,7 @@ const AdminOrders = () => {
       const { data } = await axios.get("http://localhost:3050/api/v1/auth/all-orders");
       setOrders(data);
     } catch (error) {
+      saveLogs(error.message,"admin/all-orders","Admin")
       console.log(error);
     }
   };
@@ -39,9 +42,11 @@ const AdminOrders = () => {
       });
       getOrders();
     } catch (error) {
+      saveLogs(error.message,"admin/order-status","Admin")
       console.log(error);
     }
   };
+  
   return (
     <Layout title={"All Orders Data"}>
       <div className="row dashboard">

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import CategoryForm from "../../components/Form/CategoryForm";
 import { Modal } from "antd";
+import { saveLogs } from "../../components/utils/logs";
 
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -27,6 +28,7 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
+      saveLogs(error.message,"admin/create-category","Admin")
       console.log(error);
       // toast.error("somthing went wrong in input form");
     }
@@ -40,6 +42,7 @@ const CreateCategory = () => {
         setCategories(data?.category);
       }
     } catch (error) {
+      saveLogs(error.message,"admin/get-category","Admin")
       console.log(error);
       toast.error("Something wwent wrong in getting catgeory");
     }

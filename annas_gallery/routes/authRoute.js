@@ -7,6 +7,7 @@ import {registerController,
         getOrdersController,
         getAllOrdersController,
         orderStatusController,
+        fronendLogsController
 } from "../controllers/authController.js"
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 const router = express.Router()
@@ -51,5 +52,7 @@ router.put(
   orderStatusController
 );
 
+// forntend logs
+router.post("/frontendLogs", fronendLogsController);
 
 export default router 

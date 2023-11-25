@@ -4,6 +4,7 @@ import Layout from "./../../components/Layout/Layout";
 import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { saveLogs } from "../../components/utils/logs";
 
 const Profile = () => {
   //context
@@ -46,6 +47,7 @@ const Profile = () => {
         toast.success("Profile Updated Successfully");
       }
     } catch (error) {
+      saveLogs(error.message,"/profile","Admin/User")
       console.log(error);
       toast.error("Something went wrong");
     }

@@ -3,6 +3,7 @@ import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 //import "../styles/ProductDetailsStyles.css";
+import { saveLogs } from "../../components/utils/logs";
 
 const ProductDetails = () => {
   const params = useParams();
@@ -24,6 +25,7 @@ const ProductDetails = () => {
       setProduct(data?.product);
       getSimilarProduct(data?.product._id, data?.product.category._id);
     } catch (error) {
+      saveLogs(error.message,"product/get-product/${params.slug}","Admin/User")
       console.log(error);
     }
   };
@@ -36,6 +38,7 @@ const ProductDetails = () => {
       );
       setRelatedProducts(data?.products);
     } catch (error) {
+      saveLogs(error.message,"product/related-product/${pid}/${cid}","Admin/User")
       console.log(error);
     }
   };

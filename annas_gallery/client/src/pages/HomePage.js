@@ -7,6 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Layout from "./../components/Layout/Layout";
 import { AiOutlineReload } from "react-icons/ai";
+import { saveLogs } from "../../components/utils/logs";
 //import "../styles/Homepage.css";
 
 const HomePage = () => {
@@ -30,6 +31,7 @@ const [cart, setCart] = useCart();
         setCategories(data?.category);
       }
     } catch (error) {
+      saveLogs(error.message,"category/get-category","Admin/User")
       console.log(error);
     }
   };
@@ -49,6 +51,7 @@ const [cart, setCart] = useCart();
       setLoading(false);
       setProducts(data.products);
     } catch (error) {
+      saveLogs(error.message,"product/product-list/${page}","Admin/User")
       setLoading(false);
       console.log(error);
     }
@@ -62,6 +65,7 @@ const [cart, setCart] = useCart();
       );
       setTotal(data?.total);
     } catch (error) {
+      saveLogs(error.message,"product/product-count","Admin/User")
       console.log(error);
     }
   };
@@ -81,6 +85,7 @@ const [cart, setCart] = useCart();
       setLoading(false);
       setProducts([...products, ...data?.products]);
     } catch (error) {
+      saveLogs(error.message,"product/product-list/${page}","Admin/User")
       console.log(error);
       setLoading(false);
     }
@@ -117,6 +122,7 @@ const [cart, setCart] = useCart();
       );
       setProducts(data?.products);
     } catch (error) {
+      saveLogs(error.message,"product/product-filters","Admin/User")
       console.log(error);
     }
   };

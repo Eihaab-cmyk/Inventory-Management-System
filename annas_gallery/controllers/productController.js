@@ -1,10 +1,12 @@
 import productModel from "../models/productModel.js";
 import categoryModel from "../models/categoryModel.js";
 import orderModel from "../models/orderModel.js";
+import { productAudit } from "./productAuditController.js";
 import fs from "fs";
 import slugify from "slugify";
 import braintree from "braintree";
 import dotenv from "dotenv";
+import { saveLogs } from "./backendLogsController.js";
 
 dotenv.config();
 
@@ -22,7 +24,7 @@ export const createProductController = async (req, res) => {
     const { name, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    //alidation
+    //validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -46,17 +48,19 @@ export const createProductController = async (req, res) => {
       products.photo.contentType = photo.type;
     }
     await products.save();
+    productAudit(products._id,"INSERT","-",products);
     res.status(201).send({
       success: true,
       message: "Product Created Successfully",
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/create-product","POST")
     console.log(error);
     res.status(500).send({
       success: false,
       error,
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   }
 };
@@ -77,6 +81,7 @@ export const getProductController = async (req, res) => {
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/get-product","GET")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -99,6 +104,7 @@ export const getSingleProductController = async (req, res) => {
       product,
     });
   } catch (error) {
+    saveLogs(error.message,"get-product/:slug","GET")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -117,6 +123,7 @@ export const productPhotoController = async (req, res) => {
       return res.status(200).send(product.photo.data);
     }
   } catch (error) {
+    saveLogs(error.message,"/product-photo/:pid","GET")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -129,12 +136,15 @@ export const productPhotoController = async (req, res) => {
 //delete controller
 export const deleteProductController = async (req, res) => {
   try {
+    const oldValue = await productModel.findById(req.params.pid);
     await productModel.findByIdAndDelete(req.params.pid).select("-photo");
+    productAudit(oldValue._id,"DELETE",oldValue,"-");
     res.status(200).send({
       success: true,
       message: "Product Deleted successfully",
     });
   } catch (error) {
+    saveLogs(error.message,"/delete-product/:pid","DELETE")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -144,13 +154,14 @@ export const deleteProductController = async (req, res) => {
   }
 };
 
-//update producta
+//update product
 export const updateProductController = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    //alidation
+
+    //validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -167,7 +178,7 @@ export const updateProductController = async (req, res) => {
           .status(500)
           .send({ error: "photo is Required and should be less then 1mb" });
     }
-
+    const oldValue = await productModel.findById(req.params.pid);
     const products = await productModel.findByIdAndUpdate(
       req.params.pid,
       { ...req.fields, slug: slugify(name) },
@@ -178,12 +189,14 @@ export const updateProductController = async (req, res) => {
       products.photo.contentType = photo.type;
     }
     await products.save();
+    productAudit(products._id,"UPDATE",oldValue,products);
     res.status(201).send({
       success: true,
       message: "Product Updated Successfully",
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"update-product/:pid","PUT")
     console.log(error);
     res.status(500).send({
       success: false,
@@ -206,6 +219,7 @@ export const productFiltersController = async (req, res) => {
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/product-filters","POST")
     console.log(error);
     res.status(400).send({
       success: false,
@@ -224,6 +238,7 @@ export const productCountController = async (req, res) => {
       total,
     }); 
   } catch (error) {
+    saveLogs(error.message,"/product-count","GET")
     console.log(error);
     res.status(400).send({
       message: "Error in product count",
@@ -249,6 +264,7 @@ export const productListController = async (req, res) => {
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/product-list/:page","GET")
     console.log(error);
     res.status(400).send({
       success: false,
@@ -272,6 +288,7 @@ export const searchProductController = async (req, res) => {
       .select("-photo");
     res.json(resutls); 
   } catch (error) {
+    saveLogs(error.message,"/search/:keyword","GET")
     console.log(error);
     res.status(400).send({
       success: false,
@@ -298,6 +315,7 @@ export const realtedProductController = async (req, res) => {
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/related-product/:pid/:cid","GET")
     console.log(error);
     res.status(400).send({
       success: false,
@@ -318,6 +336,7 @@ export const productCategoryController = async (req, res) => {
       products,
     });
   } catch (error) {
+    saveLogs(error.message,"/product-category/:slug","GET")
     console.log(error); 
     res.status(400).send({
       success: false,
@@ -339,6 +358,7 @@ export const braintreeTokenController = async (req, res) => {
       }
     });
   } catch (error) {
+    saveLogs(error.message,"/braintree/token","GET")
     console.log(error);
   }
 };
@@ -373,6 +393,7 @@ export const brainTreePaymentController = async (req, res) => {
       }
     );
   } catch (error) {
+    saveLogs(error.message,"/braintree/payment","POST")
     console.log(error);
   }
 };

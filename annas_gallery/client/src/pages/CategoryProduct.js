@@ -3,6 +3,7 @@ import Layout from "../components/Layout/Layout";
 import { useParams, useNavigate } from "react-router-dom";
 //import "../styles/CategoryProductStyles.css";
 import axios from "axios";
+import { saveLogs } from "../../components/utils/logs";
 
 const CategoryProduct = () => {
   const params = useParams();
@@ -21,6 +22,7 @@ const CategoryProduct = () => {
       setProducts(data?.products);
       setCategory(data?.category);
     } catch (error) {
+      saveLogs(error.message,"product/product-category/${params.slug}","Admin/User")
       console.log(error);
     }
   };

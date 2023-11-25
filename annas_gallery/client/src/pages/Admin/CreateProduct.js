@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Select } from "antd";
 import { useNavigate } from "react-router-dom";
+import { saveLogs } from "../../components/utils/logs";
+
 const { Option } = Select;
 
 const CreateProduct = () => {
@@ -26,6 +28,7 @@ const CreateProduct = () => {
         setCategories(data?.category);
       }
     } catch (error) {
+      saveLogs(error.message,"admin/category/get-category","Admin")
       console.log(error);
       toast.error("Something wwent wrong in getting catgeory");
     }
@@ -57,6 +60,7 @@ const CreateProduct = () => {
         navigate("/dashboard/admin/products");
       }
     } catch (error) {
+      saveLogs(error.message,"admin/product/create-product","Admin")
       console.log(error);
       toast.error("something went wrong");
     }

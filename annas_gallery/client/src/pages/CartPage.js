@@ -7,6 +7,7 @@ import DropIn from "braintree-web-drop-in-react";
 import { AiFillWarning } from "react-icons/ai";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { saveLogs } from "../../components/utils/logs";
 //import "../styles/CartStyles.css";
 
 const CartPage = () => {
@@ -54,6 +55,7 @@ const CartPage = () => {
       );
       setClientToken(data?.clientToken);
     } catch (error) {
+      saveLogs(error.message,"product/braintree/token","Admin/User")
       console.log(error);
     }
   };
@@ -80,6 +82,7 @@ const CartPage = () => {
       navigate("/dashboard/user/orders");
       toast.success("Payment Completed Successfully ");
     } catch (error) {
+      saveLogs(error.message,"product/braintree/payment","Admin/User")
       console.log(error);
       setLoading(false);
     }
